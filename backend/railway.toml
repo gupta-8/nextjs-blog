@@ -3,7 +3,7 @@ builder = "dockerfile"
 dockerfilePath = "Dockerfile"
 
 [deploy]
-startCommand = "uvicorn server:app --host 0.0.0.0 --port $PORT"
+startCommand = "uvicorn server:app --host 0.0.0.0 --port $PORT --workers 2 --loop uvloop --http httptools"
 healthcheckPath = "/api/health"
 healthcheckTimeout = 30
 restartPolicyType = "on_failure"

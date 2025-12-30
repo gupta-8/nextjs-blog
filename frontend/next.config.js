@@ -3,8 +3,7 @@ const nextConfig = {
   reactStrictMode: true,
   
   // Standalone output for Docker/Railway deployment
-  // Uncomment for production deployment:
-  // output: 'standalone',
+  output: 'standalone',
   
   // Enable compression
   compress: true,
