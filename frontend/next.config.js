@@ -61,7 +61,11 @@ const nextConfig = {
   
   // Rewrites to proxy /api requests to backend (for single domain setup)
   async rewrites() {
-    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8001';
+    let backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8001';
+    // Ensure URL has protocol
+    if (backendUrl && !backendUrl.startsWith('http://') && !backendUrl.startsWith('https://')) {
+      backendUrl = `https://${backendUrl}`;
+    }
     return [
       {
         source: '/api/:path*',
