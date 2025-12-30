@@ -5,7 +5,7 @@ import { Toaster } from '@/components/ui/toaster'
 
 // Default metadata - will be overridden by page-specific generateMetadata
 export const metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://yourdomain.com'),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_BACKEND_URL?.replace('/api', '').replace(':8001', ':3000') || 'https://yourdomain.com'),
   robots: {
     index: true,
     follow: true,

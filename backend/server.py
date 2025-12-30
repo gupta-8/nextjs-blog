@@ -25,7 +25,7 @@ from utils import (
     hash_ip_address
 )
 
-# Import storage module for file uploads (supports Vercel Blob in production)
+# Import storage module for file uploads
 from storage import get_storage
 
 
@@ -328,10 +328,7 @@ from routes.auth_routes import get_admin_user
 
 @api_router.post("/upload")
 async def upload_file(file: UploadFile = File(...), admin = Depends(get_admin_user)):
-    """Upload a file and return the URL (admin only)
-    
-    Uses Vercel Blob in production, local filesystem in development.
-    """
+    """Upload a file and return the URL (admin only)"""
     # Read file contents
     file_size = 0
     chunk_size = 1024 * 1024  # 1MB chunks
@@ -346,7 +343,7 @@ async def upload_file(file: UploadFile = File(...), admin = Depends(get_admin_us
         if file_size > MAX_UPLOAD_SIZE:
             raise HTTPException(status_code=413, detail=f"File too large. Maximum size is {MAX_UPLOAD_SIZE // (1024*1024*1024)}GB")
     
-    # Upload using storage module (handles both Vercel Blob and local filesystem)
+    # Upload using storage module
     storage = get_storage()
     try:
         result = await storage.upload(
@@ -641,10 +638,7 @@ async def upload_from_url(request: RemoteUrlRequest, admin = Depends(get_admin_u
 # List all uploaded files (admin only)
 @api_router.get("/admin/files")
 async def list_files(images_only: bool = False, admin = Depends(get_admin_user)):
-    """List all uploaded files with metadata. Set images_only=true to filter images.
-    
-    Uses Vercel Blob in production, local filesystem in development.
-    """
+    """List all uploaded files with metadata. Set images_only=true to filter images."""
     storage = get_storage()
     try:
         files = await storage.list_files(images_only=images_only)
@@ -655,10 +649,7 @@ async def list_files(images_only: bool = False, admin = Depends(get_admin_user))
 # Delete uploaded file (admin only)
 @api_router.delete("/admin/files/{filename}")
 async def delete_file(filename: str, admin = Depends(get_admin_user)):
-    """Delete an uploaded file.
-    
-    Uses Vercel Blob in production, local filesystem in development.
-    """
+    """Delete an uploaded file."""
     storage = get_storage()
     try:
         # Try to delete - filename can be the filename or full blob URL

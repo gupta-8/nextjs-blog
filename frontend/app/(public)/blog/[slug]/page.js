@@ -5,6 +5,13 @@ export const dynamic = 'force-dynamic'
 
 const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'https://api.yourdomain.com'
 
+// Helper to get site URL from backend URL
+const getSiteUrl = () => {
+  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'https://yourdomain.com'
+  // Convert backend URL to frontend URL (remove /api suffix if present, adjust port if needed)
+  return backendUrl.replace('/api', '').replace(':8001', ':3000').replace('api.', '')
+}
+
 // Fetch profile for metadata
 async function getProfile() {
   try {
@@ -36,7 +43,7 @@ export async function generateMetadata({ params }) {
     
     const blog = await res.json()
     const ogImage = blog.image || '/og-image.png'
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://yourdomain.com'
+    const siteUrl = getSiteUrl()
     
     return {
       title: `${blog.title} | ${authorName}`,
@@ -300,7 +307,7 @@ function ServerBlogPost({ blog, siteUrl, profile }) {
 export default async function BlogPostPage({ params }) {
   const resolvedParams = await params
   const { slug } = resolvedParams
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://yourdomain.com'
+  const siteUrl = getSiteUrl()
   
   // Fetch data on the server for SSR
   const initialData = await fetchBlogData(slug)

@@ -210,8 +210,7 @@ async def save_smtp_settings(config: SMTPConfig, admin: User = Depends(get_admin
 async def test_smtp_settings(admin: User = Depends(get_admin_user)):
     """Test SMTP configuration by sending a test email"""
     settings = await db.security_settings.find_one({}, {"_id": 0})
-    default_email = os.environ.get('ADMIN_EMAIL', 'admin@example.com')
-    admin_email = settings.get('admin_email', default_email) if settings else default_email
+    admin_email = settings.get('admin_email', 'admin@example.com') if settings else 'admin@example.com'
     
     try:
         await send_otp_email(admin_email, "123456")
@@ -226,13 +225,12 @@ async def test_smtp_settings(admin: User = Depends(get_admin_user)):
 async def get_security_settings(admin: User = Depends(get_admin_user)):
     """Get current security settings"""
     settings = await db.security_settings.find_one({}, {"_id": 0})
-    default_email = os.environ.get('ADMIN_EMAIL', 'admin@example.com')
     if not settings:
         settings = {
             "email_otp_enabled": False,
             "totp_enabled": False,
             "passkey_enabled": False,
-            "admin_email": default_email
+            "admin_email": "admin@example.com"
         }
     return settings
 

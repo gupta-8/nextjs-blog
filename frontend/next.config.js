@@ -34,7 +34,7 @@ const nextConfig = {
   },
   
   env: {
-    NEXT_PUBLIC_BACKEND_URL: process.env.NEXT_PUBLIC_BACKEND_URL || process.env.REACT_APP_BACKEND_URL,
+    NEXT_PUBLIC_BACKEND_URL: process.env.NEXT_PUBLIC_BACKEND_URL,
   },
   
   // Experimental optimizations
@@ -65,7 +65,7 @@ const nextConfig = {
   
   // Rewrites to proxy /api requests to backend (for single domain setup)
   async rewrites() {
-    const backendUrl = process.env.INTERNAL_BACKEND_URL || process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8001';
+    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8001';
     return [
       {
         source: '/api/:path*',

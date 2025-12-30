@@ -10,9 +10,8 @@ export default function NotFoundPage() {
     // Get the actual path from window.location
     if (typeof window !== 'undefined') {
       setCurrentPath(window.location.pathname);
-      // Use the actual hostname or fall back to NEXT_PUBLIC_SITE_URL
-      const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || window.location.origin;
-      const hostname = siteUrl.replace(/^https?:\/\//, '').replace(/\/$/, '');
+      // Use the actual hostname from the browser
+      const hostname = window.location.origin.replace(/^https?:\/\//, '').replace(/\/$/, '');
       setDomain(hostname);
     }
   }, []);
