@@ -12,15 +12,9 @@ SECRET_KEY = os.environ.get('JWT_SECRET_KEY', os.environ.get('JWT_SECRET', ''))
 
 # CRITICAL: Fail startup if JWT secret is not properly configured
 if not SECRET_KEY or SECRET_KEY == 'change-this-in-production-immediately':
-    logging.critical("FATAL: JWT_SECRET_KEY environment variable must be set to a secure random value!")
+    logging.critical("FATAL: JWT_SECRET_KEY environment variable must be set!")
     logging.critical("Generate one with: python -c \"import secrets; print(secrets.token_urlsafe(64))\"")
-    # In production, exit. In development, use a generated key with warning
-    if os.environ.get('ENVIRONMENT', 'development').lower() == 'production':
-        sys.exit(1)
-    else:
-        import secrets
-        SECRET_KEY = secrets.token_urlsafe(64)
-        logging.warning("WARNING: Using auto-generated JWT secret for development. Set JWT_SECRET_KEY in production!")
+    sys.exit(1)
 
 ALGORITHM = "HS256"
 # Reduced token expiry for security - use refresh tokens for longer sessions

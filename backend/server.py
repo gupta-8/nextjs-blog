@@ -141,8 +141,8 @@ class GZipMiddleware(BaseHTTPMiddleware):
         
         return response
 
-# Check if running in production (disable docs)
-IS_PRODUCTION = os.environ.get('ENVIRONMENT', 'development').lower() == 'production'
+# Production mode - docs disabled for security
+IS_PRODUCTION = True
 
 # Create the main app - disable docs in production
 app = FastAPI(
@@ -1163,13 +1163,9 @@ cors_origins = os.environ.get('CORS_ORIGINS', '')
 if cors_origins and cors_origins != '*':
     allowed_origins = [origin.strip() for origin in cors_origins.split(',') if origin.strip()]
 else:
-    # SECURITY: In production, this should fail or use a safe default
-    if os.environ.get('ENVIRONMENT', 'development').lower() == 'production':
-        logging.error("CRITICAL: CORS_ORIGINS must be set in production!")
-        allowed_origins = []  # Deny all in production if not configured
-    else:
-        allowed_origins = ["*"]
-        logging.warning("CORS_ORIGINS not set - allowing all origins. Set this in production!")
+    # SECURITY: CORS_ORIGINS must be set
+    logging.error("CRITICAL: CORS_ORIGINS must be set!")
+    allowed_origins = []  # Deny all if not configured
 
 # Add CORS middleware BEFORE security headers (middleware order is reversed)
 app.add_middleware(

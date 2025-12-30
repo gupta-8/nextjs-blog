@@ -478,16 +478,16 @@ async def disable_totp(admin: User = Depends(get_admin_user)):
 
 # ============ Passkey / WebAuthn ============
 
-# WebAuthn configuration - loaded from environment variables
-RP_ID = os.environ.get('SITE_DOMAIN', 'localhost')
-RP_NAME = os.environ.get('SITE_NAME', 'Portfolio Admin')
-ORIGIN = os.environ.get('SITE_URL', 'http://localhost:3000')
+# WebAuthn configuration defaults - can be overridden via admin panel
+DEFAULT_RP_ID = 'localhost'
+DEFAULT_RP_NAME = 'Portfolio Admin'
+DEFAULT_ORIGIN = 'http://localhost:3000'
 
 @router.get("/passkey/config")
 async def get_passkey_config(admin: User = Depends(get_admin_user)):
     """Get passkey configuration"""
     config = await db.passkey_config.find_one({}, {"_id": 0})
-    return config or {"rp_id": RP_ID, "rp_name": RP_NAME, "origin": ORIGIN}
+    return config or {"rp_id": DEFAULT_RP_ID, "rp_name": DEFAULT_RP_NAME, "origin": DEFAULT_ORIGIN}
 
 @router.put("/passkey/config")
 async def update_passkey_config(request: Request, admin: User = Depends(get_admin_user)):
@@ -495,9 +495,9 @@ async def update_passkey_config(request: Request, admin: User = Depends(get_admi
     body = await request.json()
     
     config = {
-        "rp_id": body.get('rp_id', RP_ID),
-        "rp_name": body.get('rp_name', RP_NAME),
-        "origin": body.get('origin', ORIGIN),
+        "rp_id": body.get('rp_id', DEFAULT_RP_ID),
+        "rp_name": body.get('rp_name', DEFAULT_RP_NAME),
+        "origin": body.get('origin', DEFAULT_ORIGIN),
         "updated_at": datetime.now(timezone.utc).isoformat()
     }
     
@@ -508,8 +508,8 @@ async def update_passkey_config(request: Request, admin: User = Depends(get_admi
 async def get_passkey_registration_options(admin: User = Depends(get_admin_user)):
     """Generate WebAuthn registration options"""
     config = await db.passkey_config.find_one({}, {"_id": 0})
-    rp_id = config.get('rp_id', RP_ID) if config else RP_ID
-    rp_name = config.get('rp_name', RP_NAME) if config else RP_NAME
+    rp_id = config.get('rp_id', DEFAULT_RP_ID) if config else DEFAULT_RP_ID
+    rp_name = config.get('rp_name', DEFAULT_RP_NAME) if config else DEFAULT_RP_NAME
     
     # Get existing credentials
     existing_creds = await db.passkey_credentials.find({"user_id": admin.id}).to_list(100)
@@ -556,8 +556,8 @@ async def register_passkey(request: Request, admin: User = Depends(get_admin_use
     passkey_name = body.get('name', 'My Passkey')
     
     config = await db.passkey_config.find_one({}, {"_id": 0})
-    rp_id = config.get('rp_id', RP_ID) if config else RP_ID
-    origin = config.get('origin', ORIGIN) if config else ORIGIN
+    rp_id = config.get('rp_id', DEFAULT_RP_ID) if config else DEFAULT_RP_ID
+    origin = config.get('origin', DEFAULT_ORIGIN) if config else DEFAULT_ORIGIN
     
     # Get stored challenge
     challenge_doc = await db.webauthn_challenges.find_one({"user_id": admin.id})
@@ -678,7 +678,7 @@ async def get_passkey_auth_options(request: Request):
         )
     
     config = await db.passkey_config.find_one({}, {"_id": 0})
-    rp_id = config.get('rp_id', RP_ID) if config else RP_ID
+    rp_id = config.get('rp_id', DEFAULT_RP_ID) if config else DEFAULT_RP_ID
     
     # Generate options WITHOUT allowCredentials - browser will discover passkeys
     options = generate_authentication_options(
@@ -737,8 +737,8 @@ async def authenticate_passkey(request: Request):
         raise HTTPException(status_code=400, detail="Credential and session_id required")
     
     config = await db.passkey_config.find_one({}, {"_id": 0})
-    rp_id = config.get('rp_id', RP_ID) if config else RP_ID
-    origin = config.get('origin', ORIGIN) if config else ORIGIN
+    rp_id = config.get('rp_id', DEFAULT_RP_ID) if config else DEFAULT_RP_ID
+    origin = config.get('origin', DEFAULT_ORIGIN) if config else DEFAULT_ORIGIN
     
     # Get challenge using session_id
     challenge_doc = await db.webauthn_challenges.find_one({"session_id": session_id})
