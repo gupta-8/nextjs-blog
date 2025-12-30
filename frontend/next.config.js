@@ -2,9 +2,6 @@
 const nextConfig = {
   reactStrictMode: true,
   
-  // Standalone output for Docker/Railway deployment
-  output: 'standalone',
-  
   // Enable compression
   compress: true,
   

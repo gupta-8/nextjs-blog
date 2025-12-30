@@ -160,13 +160,8 @@ Complete content management system with:
 |----------|----------|-------------|---------|
 | `MONGODB_URI` | ✅ Yes | MongoDB connection string | `mongodb+srv://user:pass@cluster.mongodb.net/db` |
 | `DB_NAME` | ✅ Yes | Database name | `portfolio` |
-| `JWT_SECRET` | ✅ Yes | Secret key for JWT (min 32 chars) | `your-super-secret-key-here` |
+| `JWT_SECRET_KEY` | ✅ Yes | Secret key for JWT (min 32 chars) | `${{ secret() }}` |
 | `CORS_ORIGINS` | ✅ Yes | Frontend URL (comma-separated) | `https://your-frontend.up.railway.app` |
-| `SITE_DOMAIN` | ⚠️ Optional | For passkey/WebAuthn | `your-frontend.up.railway.app` |
-| `SITE_NAME` | ⚠️ Optional | For passkey/WebAuthn | `My Portfolio` |
-| `SITE_URL` | ⚠️ Optional | For passkey/WebAuthn | `https://your-frontend.up.railway.app` |
-
-> ⚠️ `SITE_*` variables are only needed if you want to use Passkey/WebAuthn login
 
 ### Frontend Variables
 
@@ -177,6 +172,8 @@ Complete content management system with:
 ---
 
 ## 🚂 Railway Deployment
+
+This project uses **Nixpacks** (Railway's auto-detection) for deployment - no Dockerfile needed!
 
 ### Step 1: Create Railway Account
 
@@ -200,8 +197,7 @@ Complete content management system with:
 1. In your project, click **"+ New"**
 2. Select **"Database"** → **"MongoDB"**
 3. Wait for it to provision
-4. Click on MongoDB → **"Variables"** tab
-5. Copy `MONGO_URL` value
+4. The `MONGODB_URI` will be available as a reference variable
 
 **Option B: MongoDB Atlas (Free Tier)**
 1. Go to [mongodb.com/atlas](https://mongodb.com/atlas)
@@ -217,8 +213,8 @@ Complete content management system with:
 1. In your Railway project, click **"+ New"**
 2. Select **"GitHub Repo"**
 3. Choose your repository
-4. Click **"Add Root Directory"** → Enter: `backend`
-5. Wait for deployment to start
+4. In **Settings** → **Build** → Set **Root Directory**: `backend`
+5. Railway will auto-detect Python and build with Nixpacks
 
 **Add Environment Variables:**
 
@@ -226,9 +222,9 @@ Click on the backend service → **"Variables"** tab → **"+ New Variable"**
 
 | Variable | Value |
 |----------|-------|
-| `MONGODB_URI` | Your MongoDB connection string |
+| `MONGODB_URI` | `${{MongoDB.MONGODB_URI}}` or your Atlas connection string |
 | `DB_NAME` | `portfolio` |
-| `JWT_SECRET` | Run `openssl rand -hex 32` to generate |
+| `JWT_SECRET_KEY` | `${{ secret() }}` (Railway auto-generates) |
 | `CORS_ORIGINS` | `https://your-frontend.up.railway.app` (add after frontend deploy) |
 
 **Generate Domain:**
@@ -243,7 +239,8 @@ Click on the backend service → **"Variables"** tab → **"+ New Variable"**
 
 1. Click **"+ New"** → **"GitHub Repo"**
 2. Choose the same repository
-3. Click **"Add Root Directory"** → Enter: `frontend`
+3. In **Settings** → **Build** → Set **Root Directory**: `frontend`
+4. Railway will auto-detect Next.js and build with Nixpacks
 
 **Add Environment Variables:**
 
@@ -266,8 +263,6 @@ Go back to your backend service → **"Variables"** → Update:
 | Variable | Value |
 |----------|-------|
 | `CORS_ORIGINS` | `https://your-frontend-abc.up.railway.app` |
-| `SITE_DOMAIN` | `your-frontend-abc.up.railway.app` |
-| `SITE_URL` | `https://your-frontend-abc.up.railway.app` |
 
 The backend will automatically redeploy.
 
@@ -418,35 +413,35 @@ nextjs-blog/
 ├── 📄 README.md
 │
 ├── 📂 backend/
-│   ├── 📄 Dockerfile             # Docker configuration
-│   ├── 📄 railway.toml           # Railway configuration
-│   ├── 📄 server.py              # FastAPI application
-│   ├── 📄 auth.py                # JWT authentication
-│   ├── 📄 requirements.txt       # Python dependencies
+│   ├── 📄 Dockerfile           # Docker configuration
+│   ├── 📄 railway.toml         # Railway configuration
+│   ├── 📄 server.py            # FastAPI application
+│   ├── 📄 auth.py              # JWT authentication
+│   ├── 📄 requirements.txt     # Python dependencies
 │   │
 │   ├── 📂 routes/
-│   │   ├── admin_routes.py       # Admin API endpoints
-│   │   ├── auth_routes.py        # Authentication endpoints
-│   │   └── security_routes.py    # 2FA, passkey endpoints
+│   │   ├── admin_routes.py     # Admin API endpoints
+│   │   ├── auth_routes.py      # Authentication endpoints
+│   │   └── security_routes.py  # 2FA, passkey endpoints
 │   │
 │   ├── 📂 storage/
-│   │   └── blob_storage.py       # File storage
+│   │   └── blob_storage.py     # File storage
 │   │
 │   └── 📂 utils/
-│       ├── crypto.py             # Encryption utilities
-│       └── rate_limiter.py       # Rate limiting
+│       ├── crypto.py           # Encryption utilities
+│       └── rate_limiter.py     # Rate limiting
 │
 └── 📂 frontend/
-    ├── 📄 Dockerfile             # Docker configuration
-    ├── 📄 railway.toml           # Railway configuration
-    ├── 📄 next.config.js         # Next.js configuration
+    ├── 📄 Dockerfile           # Docker configuration
+    ├── 📄 railway.toml         # Railway configuration
+    ├── 📄 next.config.js       # Next.js configuration
     ├── 📄 package.json
     │
-    ├── 📂 app/                   # Next.js App Router
+    ├── 📂 app/                  # Next.js App Router
     │   ├── layout.js
     │   ├── page.js
-    │   ├── 📂 (public)/          # Public routes
-    │   └── 📂 admin/             # Admin routes
+    │   ├── 📂 (public)/        # Public routes
+    │   └── 📂 admin/           # Admin routes
     │
     ├── 📂 src/
     │   ├── 📂 components/
@@ -508,6 +503,19 @@ nextjs-blog/
 - Verify backend is running (check health endpoint)
 
 </details>
+
+---
+
+## 💰 Railway Pricing
+
+| Plan | Cost | Included |
+|------|------|----------|
+| **Hobby** | $5/month | 500 hours, 100GB bandwidth |
+| **Pro** | $20/month | Unlimited hours, teams |
+
+Both frontend and backend can run on the Hobby plan.
+
+---
 
 ## 📄 License
 
