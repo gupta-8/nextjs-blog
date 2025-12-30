@@ -138,13 +138,6 @@ const nextConfig = {
               priority: 40,
               chunks: 'async', // Load async - not needed for initial render
             },
-            // Rich text editor - lazy loaded
-            editor: {
-              name: 'editor',
-              test: /[\\/]node_modules[\\/](@tiptap|prosemirror|lowlight|highlight\.js)[\\/]/,
-              priority: 35,
-              chunks: 'async',
-            },
             // Commons chunk
             commons: {
               name: 'commons',
