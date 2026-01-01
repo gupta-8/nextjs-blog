@@ -506,17 +506,6 @@ nextjs-blog/
 
 ---
 
-## 💰 Railway Pricing
-
-| Plan | Cost | Included |
-|------|------|----------|
-| **Hobby** | $5/month | 500 hours, 100GB bandwidth |
-| **Pro** | $20/month | Unlimited hours, teams |
-
-Both frontend and backend can run on the Hobby plan.
-
----
-
 ## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
@@ -526,7 +515,5 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 <div align="center">
 
 ### ⭐ Star this repo if you found it useful!
-
-Made with ❤️ by Harsh
 
 </div>
