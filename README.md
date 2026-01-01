@@ -1,6 +1,6 @@
 <div align="center">
 
-# ✨ Next.js Portfolio & Blog
+# Next.js Portfolio & Blog
 
 ### A Modern Full-Stack Portfolio with Liquid Glass UI
 
@@ -509,11 +509,3 @@ nextjs-blog/
 ## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
----
-
-<div align="center">
-
-### ⭐ Star this repo if you found it useful!
-
-</div>
