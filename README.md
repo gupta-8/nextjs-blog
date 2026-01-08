@@ -11,7 +11,7 @@
 
 **A stunning portfolio website with an innovative liquid glass navigation, full-featured blog, and comprehensive admin dashboard.**
 
-[Live Demo](#) · [Report Bug](https://github.com/gupta-8/nextjs-blog/issues) · [Request Feature](https://github.com/gupta-8/nextjs-blog/issues)
+[Live Demo](nextjs-blog.up.railway.app) · [Report Bug](https://github.com/gupta-8/nextjs-blog/issues) · [Request Feature](https://github.com/gupta-8/nextjs-blog/issues)
 
 </div>
 
