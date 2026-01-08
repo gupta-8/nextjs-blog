@@ -158,7 +158,7 @@ Complete content management system with:
 
 | Variable | Required | Description | Example |
 |----------|----------|-------------|---------|
-| `MONGODB_URI` | ✅ Yes | MongoDB connection string | `mongodb+srv://user:pass@cluster.mongodb.net/db` |
+| `MONGODB_URI` | ✅ Yes | MongoDB connection string | `mongodb+srv://cxx:xxx@cluster.xxx/db` |
 | `DB_NAME` | ✅ Yes | Database name | `portfolio` |
 | `JWT_SECRET_KEY` | ✅ Yes | Secret key for JWT (min 32 chars) | `${{ secret() }}` |
 | `CORS_ORIGINS` | ✅ Yes | Frontend URL (comma-separated) | `https://your-frontend.up.railway.app` |
