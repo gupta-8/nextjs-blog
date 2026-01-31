@@ -812,7 +812,6 @@ async def get_public_page_content(page: str):
 
 # ============ Public Blog Routes ============
 @api_router.get("/blogs")
-@api_router.get("/blogs")
 async def get_blogs(featured: bool = None, limit: int = 10, request: Request = None):
     """Get published blog posts with caching and rate limiting"""
     # Rate limit public API access
@@ -1002,8 +1001,6 @@ class CommentCreate(PydanticBaseModel):
     content: str
     parent_id: Optional[str] = None
 
-
-@api_router.get("/comments/{blog_id}")
 @api_router.get("/comments/{blog_id}")
 async def get_blog_comments(blog_id: str, request: Request = None):
     """Get all approved comments for a blog post with rate limiting"""
