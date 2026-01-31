@@ -94,7 +94,7 @@ class LocalStorage:
         Returns:
             List of file metadata dicts
         """
-        image_extensions = {'.jpg', '.jpeg', '.png', '.gif', '.webp'}
+        image_extensions = {'.jpg', '.jpeg', '.png', '.gif', '.webp','.svg'}
         files = []
         
         if self.local_dir.exists():
