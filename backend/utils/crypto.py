@@ -17,46 +17,30 @@ logger = logging.getLogger(__name__)
 _fernet = None
 
 
-def _get_salt() -> bytes:
-    """
-    Get or generate a secure salt for key derivation.
-
-    Priority:
-    1. Use ENCRYPTION_SALT from environment if set
-    2. Generate a new cryptographically secure salt
-    3. Fall back to file-based storage for persistence across restarts
-    """
-    # First, check environment variable
-    env_salt = os.environ.get('ENCRYPTION_SALT')
-    if env_salt:
-        return env_salt.encode()
-
-    # Generate a new secure salt
-    salt = secrets.token_bytes(32)
-
-    # In production, consider storing this in a secure location
-    # For now, log a warning that a new salt was generated
-    logger.warning(
-        "New encryption salt generated. Set ENCRYPTION_SALT environment variable "
-        "for production deployments to ensure key continuity across restarts."
-    )
-
-    return salt
-
-
 def _get_fernet():
     """Get or create Fernet instance for encryption."""
     global _fernet
-
+    
     if _fernet is None:
         # Use JWT secret as base for encryption key
         jwt_secret = os.environ.get('JWT_SECRET_KEY', os.environ.get('JWT_SECRET', ''))
-
+        
         if not jwt_secret or jwt_secret == 'change-this-in-production-immediately':
             raise ValueError("JWT_SECRET_KEY must be set for encryption")
-
-        # Derive a proper encryption key from the JWT secret
-        salt = _get_salt()  # Use dynamic salt generation
+        
+        # Use a per-deployment salt from environment variable
+        encryption_salt = os.environ.get('ENCRYPTION_SALT', '')
+        if not encryption_salt:
+            logger.warning(
+                "ENCRYPTION_SALT is not set. Falling back to legacy static salt. "
+                "Set ENCRYPTION_SALT in your environment for improved security. "
+                "Generate one with: python -c \"import secrets; print(secrets.token_urlsafe(32))\""
+            )
+            # Legacy fallback to maintain backward compatibility with existing encrypted data
+            salt = b'your_domain_security_salt_v1'
+        else:
+            salt = encryption_salt.encode('utf-8')
+        
         kdf = PBKDF2HMAC(
             algorithm=hashes.SHA256(),
             length=32,
@@ -65,7 +49,7 @@ def _get_fernet():
         )
         key = base64.urlsafe_b64encode(kdf.derive(jwt_secret.encode()))
         _fernet = Fernet(key)
-
+    
     return _fernet
 
 
